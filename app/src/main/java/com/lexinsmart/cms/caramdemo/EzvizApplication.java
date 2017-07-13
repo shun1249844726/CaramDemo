@@ -17,6 +17,7 @@ package com.lexinsmart.cms.caramdemo;
 
 import android.app.Application;
 
+import com.orhanobut.logger.Logger;
 import com.videogo.openapi.EZOpenSDK;
 
 /**
@@ -32,11 +33,14 @@ public class EzvizApplication extends Application {
     public static EZOpenSDK getOpenSDK() {
         return EZOpenSDK.getInstance();
     }
+    private String TAG = "LoggerDemo";
 
     @Override
     public void onCreate() {
         super.onCreate();
         initSDK();
+        Logger.init(TAG);
+
     }
 
     private void initSDK() {
