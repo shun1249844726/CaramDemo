@@ -46,4 +46,6 @@ dependencies {
     compile files('libs/gson-2.7.jar')
     compile files('libs/jmdns-3.4.1.jar')
     compile files('libs/zxing.jar')
+
+
 }
