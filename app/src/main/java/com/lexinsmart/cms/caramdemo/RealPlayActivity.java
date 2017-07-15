@@ -1,7 +1,10 @@
 package com.lexinsmart.cms.caramdemo;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateFormat;
@@ -9,7 +12,9 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.Toast;
 
+import com.lexinsmart.cms.caramdemo.http.mqtt.MqttV3Service;
 import com.lexinsmart.cms.caramdemo.ui.util.ActivityUtils;
 import com.lexinsmart.cms.caramdemo.ui.util.DataManager;
 import com.lexinsmart.cms.caramdemo.ui.util.EZUtils;
@@ -23,6 +28,7 @@ import com.videogo.util.ConnectionDetector;
 import com.videogo.util.LogUtil;
 import com.videogo.util.Utils;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
@@ -42,16 +48,69 @@ public class RealPlayActivity extends AppCompatActivity implements SurfaceHolder
 
     private EZDeviceInfo mDeviceInfo = null;
     private EZCameraInfo mCameraInfo = null;
+    private Context context;
+
+
+    String ADDRESS = "180.76.179.148";
+    String PORT = "1883";
+    int Qos = 1;
+    ArrayList<String> topicList = new ArrayList<String>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ez_realplay_page);
+
+        context = this;
+
         mRealPlaySv = (SurfaceView) findViewById(R.id.realplay_sv);
         mRealPlaySh = mRealPlaySv.getHolder();
         getCameraInfoList(true);
+
+        topicList.add("er/babycradle");
+        topicList.add("er/babycradle1");
+
+        new Thread(new MqttProcThread()).start();
+    }
+    public class MqttProcThread implements Runnable {
+
+        String clientid = "xushun";
+
+        @Override
+        public void run() {
+            Message msg = new Message();
+            boolean ret = MqttV3Service.connectionMqttServer(myHandler, ADDRESS, PORT, clientid, topicList);
+            if (ret) {
+                msg.what = 1;
+            } else {
+                msg.what = 0;
+            }
+            msg.obj = "strresult";
+            myHandler.sendMessage(msg);
+        }
     }
 
+    @SuppressWarnings("HandlerLeak")
+    private Handler myHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg.what == 1) {
+                Toast.makeText(context, "连接成功", Toast.LENGTH_SHORT).show();
+
+            } else if (msg.what == 0) {
+                Toast.makeText(context, "连接失败", Toast.LENGTH_SHORT).show();
+            } else if (msg.what == 2) {
+                String strContent = "";
+                strContent += msg.getData().getString("content");
+                System.out.println("strcontent:" + strContent);
+            } else if (msg.what == 3) {
+                if (MqttV3Service.closeMqtt()) {
+                    Toast.makeText(context, "断开连接", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    };
     /**
      * 从服务器获取最新事件消息
      */

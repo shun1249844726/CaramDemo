@@ -1,18 +1,20 @@
 package com.lexinsmart.cms.caramdemo.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.lexinsmart.cms.caramdemo.Constant;
+import com.lexinsmart.cms.caramdemo.MainActivity;
 import com.lexinsmart.cms.caramdemo.R;
 import com.lexinsmart.cms.caramdemo.entity.LoginResult;
-import com.lexinsmart.cms.caramdemo.http.LoginMethod;
+import com.lexinsmart.cms.caramdemo.http.login.LoginMethod;
 import com.orhanobut.logger.Logger;
 
 
@@ -61,7 +63,14 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onNext(LoginResult loginResult) {
-                Logger.d(loginResult.getData().getToken().toString());
+//                Gson gson = new Gson();
+//                Logger.json(gson.toJson(loginResult));
+                if (loginResult.getSuccess() == 0){
+                    Logger.d(loginResult.getData().getToken().toString());
+                    Constant.TOKEN = loginResult.getData().getToken();
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
+                }
             }
         };
     }

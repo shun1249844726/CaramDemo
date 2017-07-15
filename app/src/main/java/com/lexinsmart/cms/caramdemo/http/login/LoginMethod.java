@@ -1,8 +1,5 @@
-package com.lexinsmart.cms.caramdemo.http;
+package com.lexinsmart.cms.caramdemo.http.login;
 
-import android.support.annotation.NonNull;
-
-import com.lexinsmart.cms.caramdemo.R;
 import com.lexinsmart.cms.caramdemo.entity.LoginResult;
 
 

@@ -1,4 +1,4 @@
-package com.lexinsmart.cms.caramdemo.http;
+package com.lexinsmart.cms.caramdemo.http.login;
 
 import com.lexinsmart.cms.caramdemo.entity.LoginResult;
 

@@ -73,14 +73,6 @@
             </intent-filter>
         </activity>
 
-        <receiver
-            android:name=".EzvizBroadcastReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.videogo.action.OAUTH_SUCCESS_ACTION"/>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
-            </intent-filter>
-        </receiver>
     </application>
 
 </manifest>
