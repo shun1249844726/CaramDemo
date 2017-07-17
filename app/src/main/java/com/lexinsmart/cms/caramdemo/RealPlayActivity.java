@@ -51,7 +51,7 @@ public class RealPlayActivity extends AppCompatActivity implements SurfaceHolder
     private Context context;
 
 
-    String ADDRESS = "180.76.179.148";
+    String ADDRESS = "120.92.84.64";
     String PORT = "1883";
     int Qos = 1;
     ArrayList<String> topicList = new ArrayList<String>();

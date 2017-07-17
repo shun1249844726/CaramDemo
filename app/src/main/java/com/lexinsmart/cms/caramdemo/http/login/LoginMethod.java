@@ -15,6 +15,7 @@ import rx.Observer;
 import rx.Subscriber;
 import rx.schedulers.Schedulers;
 import rx.android.schedulers.AndroidSchedulers;
+import static com.lexinsmart.cms.caramdemo.Constant.BASE_URL;
 
 /**
  * Created by xushun on 2017/7/13.
@@ -22,7 +23,6 @@ import rx.android.schedulers.AndroidSchedulers;
 
 public class LoginMethod {
 
-    public static final String BASE_LOGIN_URL = "http://erm.lexinsmart.com/";
     private  static final  int DEFAULT_TIMEOUT = 5;
 
     private Retrofit mRetrofit;
@@ -45,7 +45,7 @@ public class LoginMethod {
                 .client(builder.build())
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .baseUrl(BASE_LOGIN_URL)
+                .baseUrl(BASE_URL)
                 .build();
         mLoginService  = mRetrofit.create(LoginService.class);
 

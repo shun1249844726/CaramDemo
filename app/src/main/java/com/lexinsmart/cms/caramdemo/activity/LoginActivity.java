@@ -50,6 +50,26 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
+
+    }
+    @OnClick(R.id.btn_login)
+    public void login(){
+        login(mEdtLoginUserId.getText().toString(),mEdtLoginPsd.getText().toString());
+    }
+
+    private void login(String uname, String psd) {
+        LoginMethod.getInstance().login(subscribe,uname,psd);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        subscribe.unsubscribe();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         subscribe = new Subscriber<LoginResult>() {
             @Override
             public void onCompleted() {
@@ -74,13 +94,4 @@ public class LoginActivity extends AppCompatActivity {
             }
         };
     }
-    @OnClick(R.id.btn_login)
-    public void login(){
-        login(mEdtLoginUserId.getText().toString(),mEdtLoginPsd.getText().toString());
-    }
-
-    private void login(String uname, String psd) {
-        LoginMethod.getInstance().login(subscribe,uname,psd);
-    }
-
 }
