@@ -7,6 +7,7 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 import rx.Observable;
 
 /**
@@ -14,7 +15,6 @@ import rx.Observable;
  */
 
 public interface GetDeviceListService {
-    @FormUrlEncoded
     @GET("device")
-    Observable<DeviceListData> getDeviceList(@Path("token") String token, @Path("topic") String topic);
+    Observable<DeviceListData> getDeviceList(@Query("token") String token);
 }

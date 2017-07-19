@@ -12,4 +12,8 @@ public class Constant {
 
     public static final String BASE_URL = "http://erm.lexinsmart.com/";
 
+    public static final String MQTT_ADDRESS = "120.92.84.64";
+    public static final String MQTT_PORT = "1883";
+
+
 }

@@ -50,7 +50,6 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
-
     }
     @OnClick(R.id.btn_login)
     public void login(){
@@ -86,10 +85,11 @@ public class LoginActivity extends AppCompatActivity {
 //                Gson gson = new Gson();
 //                Logger.json(gson.toJson(loginResult));
                 if (loginResult.getSuccess() == 0){
-                    Logger.d(loginResult.getData().getToken().toString());
                     Constant.TOKEN = loginResult.getData().getToken();
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);
+
+                    finish();
                 }
             }
         };

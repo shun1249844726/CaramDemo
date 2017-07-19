@@ -1,12 +1,13 @@
 package com.lexinsmart.cms.caramdemo.entity;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by xushun on 2017/7/17.
  */
 
-public class DeviceListData {
+public class DeviceListData implements Serializable {
     /**
      * success : 0
      * msg : Get device list success!
@@ -41,7 +42,7 @@ public class DeviceListData {
         this.data = data;
     }
 
-    public static class DataBean {
+    public static class DataBean implements Serializable{
         /**
          * device_name : tempeture1
          * topic : 123456712341
@@ -85,5 +86,7 @@ public class DeviceListData {
         public void setRemarks(String remarks) {
             this.remarks = remarks;
         }
+
     }
+
 }

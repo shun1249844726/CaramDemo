@@ -1,23 +1,32 @@
-package com.lexinsmart.cms.caramdemo;
+package com.lexinsmart.cms.caramdemo.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
+import android.widget.GridView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
+import com.lexinsmart.cms.caramdemo.EzvizApplication;
+import com.lexinsmart.cms.caramdemo.R;
+import com.lexinsmart.cms.caramdemo.entity.DeviceListData;
+import com.lexinsmart.cms.caramdemo.entity.SensorData;
 import com.lexinsmart.cms.caramdemo.http.mqtt.MqttV3Service;
+import com.lexinsmart.cms.caramdemo.ui.adapter.DeviceDetailsGridAdapter;
 import com.lexinsmart.cms.caramdemo.ui.util.ActivityUtils;
 import com.lexinsmart.cms.caramdemo.ui.util.DataManager;
 import com.lexinsmart.cms.caramdemo.ui.util.EZUtils;
+import com.orhanobut.logger.Logger;
 import com.videogo.errorlayer.ErrorInfo;
 import com.videogo.exception.BaseException;
 import com.videogo.exception.ErrorCode;
@@ -26,18 +35,18 @@ import com.videogo.openapi.bean.EZCameraInfo;
 import com.videogo.openapi.bean.EZDeviceInfo;
 import com.videogo.util.ConnectionDetector;
 import com.videogo.util.LogUtil;
-import com.videogo.util.Utils;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
 
 import static com.lexinsmart.cms.caramdemo.EzvizApplication.getOpenSDK;
+import static com.lexinsmart.cms.caramdemo.Constant.MQTT_ADDRESS;
+import static com.lexinsmart.cms.caramdemo.Constant.MQTT_PORT;
 
 /**
  * Created by xushun on 2017/7/11.
  */
+
 
 public class RealPlayActivity extends AppCompatActivity implements SurfaceHolder.Callback {
 
@@ -50,11 +59,12 @@ public class RealPlayActivity extends AppCompatActivity implements SurfaceHolder
     private EZCameraInfo mCameraInfo = null;
     private Context context;
 
+    private GridView gvDetails;
+    private DeviceDetailsGridAdapter mDeviceDetailsGridAdapter;
 
-    String ADDRESS = "120.92.84.64";
-    String PORT = "1883";
     int Qos = 1;
     ArrayList<String> topicList = new ArrayList<String>();
+    private List<DeviceListData.DataBean> DeviceListDataBean = new ArrayList<DeviceListData.DataBean>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,15 +72,20 @@ public class RealPlayActivity extends AppCompatActivity implements SurfaceHolder
         setContentView(R.layout.ez_realplay_page);
 
         context = this;
+        DeviceListDataBean = (List<DeviceListData.DataBean>) getIntent().getSerializableExtra("bean");
 
         mRealPlaySv = (SurfaceView) findViewById(R.id.realplay_sv);
         mRealPlaySh = mRealPlaySv.getHolder();
         getCameraInfoList(true);
 
-        topicList.add("er/babycradle");
-        topicList.add("er/babycradle1");
-
+        for (int topicListIndex = 0;topicListIndex< DeviceListDataBean.size(); topicListIndex++){
+            topicList.add(DeviceListDataBean.get(topicListIndex).getTopic());
+        }
         new Thread(new MqttProcThread()).start();
+
+        gvDetails = (GridView) findViewById(R.id.gv_device_details);
+        mDeviceDetailsGridAdapter = new DeviceDetailsGridAdapter(context,DeviceListDataBean);
+        gvDetails.setAdapter(mDeviceDetailsGridAdapter);
     }
     public class MqttProcThread implements Runnable {
 
@@ -79,7 +94,7 @@ public class RealPlayActivity extends AppCompatActivity implements SurfaceHolder
         @Override
         public void run() {
             Message msg = new Message();
-            boolean ret = MqttV3Service.connectionMqttServer(myHandler, ADDRESS, PORT, clientid, topicList);
+            boolean ret = MqttV3Service.connectionMqttServer(myHandler, MQTT_ADDRESS, MQTT_PORT, clientid, topicList);
             if (ret) {
                 msg.what = 1;
             } else {
@@ -103,7 +118,22 @@ public class RealPlayActivity extends AppCompatActivity implements SurfaceHolder
             } else if (msg.what == 2) {
                 String strContent = "";
                 strContent += msg.getData().getString("content");
-                System.out.println("strcontent:" + strContent);
+
+                strContent = strContent.replaceAll("\\s*", "");
+                strContent = strContent.trim();
+                Logger.d("strcontent:" + strContent);
+
+                if(isGoodJson(strContent)){
+                    Gson gson = new Gson();
+                    SensorData res = gson.fromJson(strContent, SensorData.class);
+                    for (int j = 0;j<DeviceListDataBean.size();j++){
+                        if (res.getId().equals(DeviceListDataBean.get(j).getTopic())){
+                            DeviceListDataBean.get(j).setValue(res.getData());
+                        }
+                    }
+                    Logger.json(new Gson().toJson(DeviceListDataBean));
+                    mDeviceDetailsGridAdapter.notifyDataSetChanged();
+                }
             } else if (msg.what == 3) {
                 if (MqttV3Service.closeMqtt()) {
                     Toast.makeText(context, "断开连接", Toast.LENGTH_SHORT).show();
@@ -111,6 +141,17 @@ public class RealPlayActivity extends AppCompatActivity implements SurfaceHolder
             }
         }
     };
+
+    public static boolean isGoodJson(String json) {
+
+        try {
+            new JsonParser().parse(json);
+            return true;
+        } catch (JsonParseException e) {
+            System.out.println("bad json: " + json);
+            return false;
+        }
+    }
     /**
      * 从服务器获取最新事件消息
      */

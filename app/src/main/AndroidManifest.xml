@@ -59,11 +59,12 @@
             android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name=".RealPlayActivity"
+            android:name=".activity.RealPlayActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait"/>
-        <activity android:name=".activity.LoginActivity"
-                  android:configChanges="orientation|keyboardHidden"
+        <activity
+            android:name=".activity.LoginActivity"
+            android:configChanges="orientation|keyboardHidden"
             android:windowSoftInputMode="stateHidden|stateAlwaysHidden">
 
             <intent-filter>
@@ -72,7 +73,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
     </application>
 
 </manifest>
