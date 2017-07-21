@@ -18,11 +18,12 @@ public class Constant {
     public static final int TYPE_UNKNOW = 0;
     public static final int TYPE_TEMPETURE = 1;
     public static final int TYPE_HUMIDITY = 2;
-    public static final int TYPE_AIRCOND = 3;
-    public static final int TYPE_INFRARED = 4;
-    public static final int TYPE_SMOKE = 5;
-    public static final int TYPE_DOOR = 6;
-    public static final int TYPE_POWER = 7;
+    public static final int TYPE_INFRARED = 3;
+    public static final int TYPE_SMOKE = 4;
+    public static final int TYPE_POWER = 5;
+
+    public static final int TYPE_AIRCOND = 11;
+    public static final int TYPE_DOOR = 12;
 
 
 

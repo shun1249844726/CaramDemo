@@ -1,7 +1,6 @@
 package com.lexinsmart.cms.caramdemo.activity;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,12 +10,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
+import com.lexinsmart.cms.caramdemo.Constant;
 import com.lexinsmart.cms.caramdemo.EzvizApplication;
 import com.lexinsmart.cms.caramdemo.R;
 import com.lexinsmart.cms.caramdemo.entity.DeviceListData;
@@ -26,6 +28,7 @@ import com.lexinsmart.cms.caramdemo.ui.adapter.DeviceDetailsGridAdapter;
 import com.lexinsmart.cms.caramdemo.ui.util.ActivityUtils;
 import com.lexinsmart.cms.caramdemo.ui.util.DataManager;
 import com.lexinsmart.cms.caramdemo.ui.util.EZUtils;
+import com.lexinsmart.cms.caramdemo.ui.util.IdToType;
 import com.orhanobut.logger.Logger;
 import com.videogo.errorlayer.ErrorInfo;
 import com.videogo.exception.BaseException;
@@ -37,6 +40,7 @@ import com.videogo.util.ConnectionDetector;
 import com.videogo.util.LogUtil;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import static com.lexinsmart.cms.caramdemo.EzvizApplication.getOpenSDK;
@@ -64,7 +68,7 @@ public class RealPlayActivity extends AppCompatActivity implements SurfaceHolder
 
     int Qos = 1;
     ArrayList<String> topicList = new ArrayList<String>();
-    private List<DeviceListData.DataBean> DeviceListDataBean = new ArrayList<DeviceListData.DataBean>();
+    private static List<DeviceListData.DataBean> DeviceListDataBean = new ArrayList<DeviceListData.DataBean>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -86,7 +90,69 @@ public class RealPlayActivity extends AppCompatActivity implements SurfaceHolder
         gvDetails = (GridView) findViewById(R.id.gv_device_details);
         mDeviceDetailsGridAdapter = new DeviceDetailsGridAdapter(context,DeviceListDataBean);
         gvDetails.setAdapter(mDeviceDetailsGridAdapter);
+
+        gvDetails.setOnItemClickListener(onclick);
     }
+    AdapterView.OnItemClickListener onclick  = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            IdToType mIdToType = new IdToType();
+            LinkedHashMap linkedHashMap = new LinkedHashMap();
+            Gson gson = new Gson();
+
+            int type = mIdToType.idToType(DeviceListDataBean.get(position).getTopic());
+            if (type > 10){
+                linkedHashMap.put("type","c");
+
+                switch (type){
+                    case Constant.TYPE_AIRCOND:
+                        Logger.d("value:"+DeviceListDataBean.get(position).getValue());
+
+                        linkedHashMap.put("id",DeviceListDataBean.get(position).getTopic());
+                        linkedHashMap.put("type","c");
+                        linkedHashMap.put("ctype","airc");
+
+                        if (Integer.parseInt(DeviceListDataBean.get(position).getValue())>0){
+                            DeviceListDataBean.get(position).setValue("000");
+                            linkedHashMap.put("data","000");
+
+                            mDeviceDetailsGridAdapter.notifyDataSetChanged();
+
+                        }else {
+                            linkedHashMap.put("data","100");
+                            DeviceListDataBean.get(position).setValue("100");
+                            mDeviceDetailsGridAdapter.notifyDataSetChanged();
+
+                        }
+                        Logger.json(gson.toJson(linkedHashMap,LinkedHashMap.class));
+                        break;
+                    case Constant.TYPE_DOOR:
+                        Logger.d("value:"+DeviceListDataBean.get(position).getValue());
+
+                        linkedHashMap.put("id",DeviceListDataBean.get(position).getTopic());
+                        linkedHashMap.put("ctype","door");
+
+                        if (Integer.parseInt(DeviceListDataBean.get(position).getValue())>0){
+                            DeviceListDataBean.get(position).setValue("000");
+                            linkedHashMap.put("data","000");
+
+                            mDeviceDetailsGridAdapter.notifyDataSetChanged();
+
+                        }else {
+                            linkedHashMap.put("data","100");
+                            DeviceListDataBean.get(position).setValue("100");
+                            mDeviceDetailsGridAdapter.notifyDataSetChanged();
+
+                        }
+                        Logger.json(gson.toJson(linkedHashMap,LinkedHashMap.class));
+
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    };
     public class MqttProcThread implements Runnable {
 
         String clientid = "xushun";

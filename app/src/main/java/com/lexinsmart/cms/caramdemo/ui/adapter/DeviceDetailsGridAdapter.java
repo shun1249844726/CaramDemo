@@ -69,6 +69,7 @@ public class DeviceDetailsGridAdapter extends BaseAdapter {
         int type = 0;
         type = mIdToType.idToType(DeviceListDataBean.get(position).getTopic());
         String value = DeviceListDataBean.get(position).getValue();
+        int valueData = Integer.parseInt(value);
         String  id = DeviceListDataBean.get(position).getTopic();
         switch (type){
             case Constant.TYPE_UNKNOW:
@@ -76,37 +77,51 @@ public class DeviceDetailsGridAdapter extends BaseAdapter {
                 holder.imgType.setImageResource(R.mipmap.face);
                 break;
             case Constant.TYPE_AIRCOND:
-                value = "空调";
-                holder.imgType.setImageResource(R.mipmap.ic_aircond_off);
+                if (valueData == 0){
+                    holder.imgType.setImageResource(R.mipmap.ic_aircond_off);
+                    value = "空调 关";
+
+                }else {
+                    holder.imgType.setImageResource(R.mipmap.ic_aircond_on);
+                    value = "空调 开";
+
+                }
                 break;
             case Constant.TYPE_HUMIDITY:
                 value = "湿度"+value;
-
-                holder.imgType.setImageResource(R.mipmap.ic_humidity_off);
+                holder.imgType.setImageResource(R.mipmap.ic_humidity_on);
                 break;
             case Constant.TYPE_INFRARED:
-                value = "人体检测";
 
-                if (value.equals("0")){
-                    holder.imgType.setImageResource(R.mipmap.ic_infrared_detection_off);
+                if (valueData == 0){
+                    value = "人体检测";
+                    holder.imgType.setImageResource(R.mipmap.ic_body_detect_off);
                 }
                 else {
-                    holder.imgType.setImageResource(R.mipmap.ic_infrared_detection_on);
+                    if (valueData == 0){
+                        holder.imgType.setImageResource(R.mipmap.ic_body_detect_off);
+                        value = "人体检测：正常";
+
+                    }else {
+                        holder.imgType.setImageResource(R.mipmap.ic_body_detect_on);
+                        value = "人体检测：有人";
+
+                    }
+
                 }
                 break;
             case Constant.TYPE_SMOKE:
                 value = "烟雾浓度："+value;
-
                 holder.imgType.setImageResource(R.mipmap.ic_smoke_off);
                 break;
             case Constant.TYPE_TEMPETURE:
                 value = "温度："+value+" 度";
 
-                holder.imgType.setImageResource(R.mipmap.ic_tempeture_off);
+                holder.imgType.setImageResource(R.mipmap.ic_tempeture_on);
                 break;
             case Constant.TYPE_DOOR:
 
-                if (value.equals("0")){
+                if (valueData == 0){
                     value = "门禁 关";
                     holder.imgType.setImageResource(R.mipmap.ic_close_door);
 

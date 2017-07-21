@@ -11,22 +11,26 @@ import com.orhanobut.logger.Logger;
 
 public class IdToType {
     public int idToType(String id){
-        Logger.d("id-+"+id);
         switch (id){
-            case "er/123456712341":
+            case "er/1234567/12341":
                 return Constant.TYPE_TEMPETURE;
-            case "er/123456712342":
+            case "er/1234567/12342":
                 return Constant.TYPE_HUMIDITY;
-            case "er/123456712343":
-                return Constant.TYPE_AIRCOND;
-            case "er/123456712344":
-                return Constant.TYPE_INFRARED;
-            case "er/123456712345":
+            case "er/1234567/12343":
                 return Constant.TYPE_SMOKE;
-            case "er/123456712346":
-                return Constant.TYPE_DOOR;
-            case "er/123456712347":
+
+            case "er/1234567/12344":
+                return Constant.TYPE_INFRARED;
+
+            case "er/1234567/12345":
                 return Constant.TYPE_POWER;
+
+            case "er/1234567/12346":
+                return Constant.TYPE_AIRCOND;
+
+            case "er/1234567/12347":
+                return Constant.TYPE_DOOR;
+
             default:
                 return Constant.TYPE_UNKNOW;
         }
