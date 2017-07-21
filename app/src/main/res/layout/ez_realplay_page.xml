@@ -20,7 +20,7 @@
             android:id="@+id/gv_device_details"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:numColumns="2">
+            android:numColumns="3">
 
         </GridView>
     </android.support.v4.widget.SwipeRefreshLayout>

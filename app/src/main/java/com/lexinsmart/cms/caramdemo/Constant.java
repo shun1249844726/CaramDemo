@@ -15,5 +15,17 @@ public class Constant {
     public static final String MQTT_ADDRESS = "120.92.84.64";
     public static final String MQTT_PORT = "1883";
 
+    public static final int TYPE_UNKNOW = 0;
+    public static final int TYPE_TEMPETURE = 1;
+    public static final int TYPE_HUMIDITY = 2;
+    public static final int TYPE_AIRCOND = 3;
+    public static final int TYPE_INFRARED = 4;
+    public static final int TYPE_SMOKE = 5;
+    public static final int TYPE_DOOR = 6;
+    public static final int TYPE_POWER = 7;
+
+
+
+
 
 }

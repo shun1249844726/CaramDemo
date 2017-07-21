@@ -8,8 +8,10 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.lexinsmart.cms.caramdemo.Constant;
 import com.lexinsmart.cms.caramdemo.R;
 import com.lexinsmart.cms.caramdemo.entity.DeviceListData;
+import com.lexinsmart.cms.caramdemo.ui.util.IdToType;
 
 import java.util.List;
 
@@ -63,8 +65,64 @@ public class DeviceDetailsGridAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.tvValue.setText(DeviceListDataBean.get(position).getValue());
-        holder.imgType.setImageResource(R.mipmap.ic_tempeture_on);
+        IdToType mIdToType = new IdToType();
+        int type = 0;
+        type = mIdToType.idToType(DeviceListDataBean.get(position).getTopic());
+        String value = DeviceListDataBean.get(position).getValue();
+        String  id = DeviceListDataBean.get(position).getTopic();
+        switch (type){
+            case Constant.TYPE_UNKNOW:
+                value = "未知设备";
+                holder.imgType.setImageResource(R.mipmap.face);
+                break;
+            case Constant.TYPE_AIRCOND:
+                value = "空调";
+                holder.imgType.setImageResource(R.mipmap.ic_aircond_off);
+                break;
+            case Constant.TYPE_HUMIDITY:
+                value = "湿度"+value;
+
+                holder.imgType.setImageResource(R.mipmap.ic_humidity_off);
+                break;
+            case Constant.TYPE_INFRARED:
+                value = "人体检测";
+
+                if (value.equals("0")){
+                    holder.imgType.setImageResource(R.mipmap.ic_infrared_detection_off);
+                }
+                else {
+                    holder.imgType.setImageResource(R.mipmap.ic_infrared_detection_on);
+                }
+                break;
+            case Constant.TYPE_SMOKE:
+                value = "烟雾浓度："+value;
+
+                holder.imgType.setImageResource(R.mipmap.ic_smoke_off);
+                break;
+            case Constant.TYPE_TEMPETURE:
+                value = "温度："+value+" 度";
+
+                holder.imgType.setImageResource(R.mipmap.ic_tempeture_off);
+                break;
+            case Constant.TYPE_DOOR:
+
+                if (value.equals("0")){
+                    value = "门禁 关";
+                    holder.imgType.setImageResource(R.mipmap.ic_close_door);
+
+                }else {
+                    value = "门禁 开";
+
+                    holder.imgType.setImageResource(R.mipmap.ic_open_door);
+
+                }
+                break;
+
+            case Constant.TYPE_POWER:
+                holder.imgType.setImageResource(R.mipmap.ic_power_off);
+                break;
+        }
+        holder.tvValue.setText(value);
         return convertView;
     }
     public final class ViewHolder{
