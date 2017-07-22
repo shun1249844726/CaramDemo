@@ -10,8 +10,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.lexinsmart.cms.caramdemo.activity.AddDeviceActivity;
 import com.lexinsmart.cms.caramdemo.activity.RealPlayActivity;
 import com.lexinsmart.cms.caramdemo.entity.AccessToken;
 import com.lexinsmart.cms.caramdemo.entity.DeviceListData;
@@ -41,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private DeviceListAdapter deviceListAdapter;
     private Subscriber<DeviceListData> deviceSubscribe;
 
+    private static final int REQUEST_CODE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,12 +122,26 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_add) {
+            Intent intent  = new Intent();
+            intent.setClass(MainActivity.this, AddDeviceActivity.class);
+            startActivityForResult(intent,REQUEST_CODE);
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE && requestCode == 0){
+            initGetDeviceSubscribe();
+            GetDeviceMethod.getInstance().getDeviceList(deviceSubscribe, TOKEN);
+        }
+
+    }
+
     /**
      * 初始化获取设备列表的观察者
      */
