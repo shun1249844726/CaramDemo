@@ -10,14 +10,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.lexinsmart.cms.caramdemo.activity.AddDeviceActivity;
 import com.lexinsmart.cms.caramdemo.activity.RealPlayActivity;
 import com.lexinsmart.cms.caramdemo.entity.AccessToken;
 import com.lexinsmart.cms.caramdemo.entity.DeviceListData;
-import com.lexinsmart.cms.caramdemo.http.device.GetDeviceMethod;
+import com.lexinsmart.cms.caramdemo.http.device.get.GetDeviceMethod;
 import com.lexinsmart.cms.caramdemo.http.ys.GetTokenMethod;
 import com.lexinsmart.cms.caramdemo.ui.adapter.DeviceListAdapter;
 import com.lexinsmart.cms.caramdemo.ui.dialog.WaittingDialog;

@@ -1,4 +1,4 @@
-package com.lexinsmart.cms.caramdemo.http.device;
+package com.lexinsmart.cms.caramdemo.http.device.get;
 
 import com.lexinsmart.cms.caramdemo.entity.DeviceListData;
 

@@ -1,11 +1,6 @@
-package com.lexinsmart.cms.caramdemo.http.device;
+package com.lexinsmart.cms.caramdemo.http.device.add;
 
-/**
- * Created by xushun on 2017/7/17.
- */
-
-
-import com.lexinsmart.cms.caramdemo.entity.DeviceListData;
+import com.lexinsmart.cms.caramdemo.entity.AddDeviceResultEntity;
 
 import java.util.concurrent.TimeUnit;
 
@@ -20,50 +15,42 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 import static com.lexinsmart.cms.caramdemo.Constant.BASE_URL;
+/**
+ * Created by xushun on 2017/7/24.
+ */
 
-public class GetDeviceMethod {
+public class AddDevceMethord {
+
     private static final int DEFAULT_TIMEOUT = 5;
-
     private Retrofit mRetrofit;
-    private GetDeviceListService mGetDeviceListService;
+    private AddDeviceService mAddDeviceService;
 
-    //在访问HttpMethods时创建单例
-    private static class SingletonHolder {
-        private static final GetDeviceMethod INSTANCE = new GetDeviceMethod();
-    }
-
-    //获取单例
-    public static GetDeviceMethod getInstance() {
-        return GetDeviceMethod.SingletonHolder.INSTANCE;
-    }
-
-    private GetDeviceMethod() {
+    private AddDevceMethord() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
-
         mRetrofit = new Retrofit.Builder()
-                .client(builder.build())
                 .baseUrl(BASE_URL)
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .client(builder.build())
                 .build();
-        mGetDeviceListService = mRetrofit.create(GetDeviceListService.class);
-
+        mAddDeviceService = mRetrofit.create(AddDeviceService.class);
+    }
+    public static class SingletonHolder{
+        private static final AddDevceMethord INSTANCE  = new AddDevceMethord();
+    }
+    public static AddDevceMethord getInstance(){
+        return SingletonHolder.INSTANCE;
+    }
+    public void addDevice(Subscriber<AddDeviceResultEntity> subscriber,String deviceName,String topic,String remarks,String token){
+        Observable observable = mAddDeviceService.addDevice(deviceName,topic,remarks,token);
+        toSubscribe(observable,subscriber);
 
     }
-
-    public void getDeviceList(Subscriber<DeviceListData> subscriber, String token) {
-        Observable observable = mGetDeviceListService.getDeviceList(token);
-
-        toSubscribe(observable, subscriber);
-
-    }
-
     private <T> void toSubscribe(Observable<T> o, Subscriber<T> s) {
         o.subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((Observer<? super T>) s);
     }
-
 }
