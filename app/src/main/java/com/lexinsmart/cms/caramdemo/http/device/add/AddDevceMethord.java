@@ -12,6 +12,7 @@ import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 import static com.lexinsmart.cms.caramdemo.Constant.BASE_URL;
@@ -47,6 +48,7 @@ public class AddDevceMethord {
         toSubscribe(observable,subscriber);
 
     }
+
     private <T> void toSubscribe(Observable<T> o, Subscriber<T> s) {
         o.subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
