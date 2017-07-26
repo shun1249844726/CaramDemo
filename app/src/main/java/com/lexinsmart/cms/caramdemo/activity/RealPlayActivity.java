@@ -40,8 +40,10 @@ import com.videogo.util.ConnectionDetector;
 import com.videogo.util.LogUtil;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.lexinsmart.cms.caramdemo.EzvizApplication.getOpenSDK;
 import static com.lexinsmart.cms.caramdemo.Constant.MQTT_ADDRESS;
@@ -82,69 +84,73 @@ public class RealPlayActivity extends AppCompatActivity implements SurfaceHolder
         mRealPlaySh = mRealPlaySv.getHolder();
         getCameraInfoList(true);
 
-        for (int topicListIndex = 0;topicListIndex< DeviceListDataBean.size(); topicListIndex++){
+        for (int topicListIndex = 0; topicListIndex < DeviceListDataBean.size(); topicListIndex++) {
             topicList.add(DeviceListDataBean.get(topicListIndex).getTopic());
         }
         new Thread(new MqttProcThread()).start();
 
         gvDetails = (GridView) findViewById(R.id.gv_device_details);
-        mDeviceDetailsGridAdapter = new DeviceDetailsGridAdapter(context,DeviceListDataBean);
+        mDeviceDetailsGridAdapter = new DeviceDetailsGridAdapter(context, DeviceListDataBean);
         gvDetails.setAdapter(mDeviceDetailsGridAdapter);
 
         gvDetails.setOnItemClickListener(onclick);
     }
-    AdapterView.OnItemClickListener onclick  = new AdapterView.OnItemClickListener() {
+
+    AdapterView.OnItemClickListener onclick = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             IdToType mIdToType = new IdToType();
-            LinkedHashMap linkedHashMap = new LinkedHashMap();
+            Map<String, String> linkedHashMap = new LinkedHashMap<String, String>();
             Gson gson = new Gson();
-
+            String message ="";
             int type = mIdToType.idToType(DeviceListDataBean.get(position).getTopic());
-            if (type > 10){
-                linkedHashMap.put("type","c");
+            if (type > 10) {
 
-                switch (type){
+                linkedHashMap.put("id", DeviceListDataBean.get(position).getTopic());
+                linkedHashMap.put("type", "c");
+
+                switch (type) {
                     case Constant.TYPE_AIRCOND:
-                        Logger.d("value:"+DeviceListDataBean.get(position).getValue());
+                        Logger.d("value:" + DeviceListDataBean.get(position).getValue());
+                        linkedHashMap.put("ctype", "airc");
 
-                        linkedHashMap.put("id",DeviceListDataBean.get(position).getTopic());
-                        linkedHashMap.put("type","c");
-                        linkedHashMap.put("ctype","airc");
-
-                        if (Integer.parseInt(DeviceListDataBean.get(position).getValue())>0){
+                        if (Integer.parseInt(DeviceListDataBean.get(position).getValue()) > 0) {
                             DeviceListDataBean.get(position).setValue("000");
-                            linkedHashMap.put("data","000");
-
+                            linkedHashMap.put("data", "000");
                             mDeviceDetailsGridAdapter.notifyDataSetChanged();
 
-                        }else {
-                            linkedHashMap.put("data","100");
+                        } else {
+                            linkedHashMap.put("data", "100");
                             DeviceListDataBean.get(position).setValue("100");
                             mDeviceDetailsGridAdapter.notifyDataSetChanged();
 
                         }
-                        Logger.json(gson.toJson(linkedHashMap,LinkedHashMap.class));
+                        message = gson.toJson(linkedHashMap);
+                        MqttV3Service.publishMsg(message, Qos,position);
+                        Logger.d("message:"+message);
                         break;
                     case Constant.TYPE_DOOR:
-                        Logger.d("value:"+DeviceListDataBean.get(position).getValue());
-
-                        linkedHashMap.put("id",DeviceListDataBean.get(position).getTopic());
-                        linkedHashMap.put("ctype","door");
-
-                        if (Integer.parseInt(DeviceListDataBean.get(position).getValue())>0){
+                        linkedHashMap.put("ctype", "door");
+                        if (Integer.parseInt(DeviceListDataBean.get(position).getValue()) > 0) {
                             DeviceListDataBean.get(position).setValue("000");
-                            linkedHashMap.put("data","000");
+                            linkedHashMap.put("data", "000");
 
                             mDeviceDetailsGridAdapter.notifyDataSetChanged();
 
-                        }else {
-                            linkedHashMap.put("data","100");
+                        } else {
+                            linkedHashMap.put("data", "100");
                             DeviceListDataBean.get(position).setValue("100");
                             mDeviceDetailsGridAdapter.notifyDataSetChanged();
 
                         }
-                        Logger.json(gson.toJson(linkedHashMap,LinkedHashMap.class));
+//                        Iterator<Map.Entry<String, String>> it = linkedHashMap.entrySet().iterator();
+//                        while (it.hasNext()) {
+//                            Map.Entry<String, String> e = it.next();
+//                           Logger.d("Key: " + e.getKey() + ";   Value: "       + e.getValue());
+//                        }
+                        message = gson.toJson(linkedHashMap);
+                        MqttV3Service.publishMsg(message, Qos,position);
+                        Logger.d("message:"+message);
 
                         break;
                     default:
@@ -153,6 +159,7 @@ public class RealPlayActivity extends AppCompatActivity implements SurfaceHolder
             }
         }
     };
+
     public class MqttProcThread implements Runnable {
 
         String clientid = "xushun";
@@ -189,11 +196,11 @@ public class RealPlayActivity extends AppCompatActivity implements SurfaceHolder
                 strContent = strContent.trim();
                 Logger.d("strcontent:" + strContent);
 
-                if(isGoodJson(strContent)){
+                if (isGoodJson(strContent)) {
                     Gson gson = new Gson();
                     SensorData res = gson.fromJson(strContent, SensorData.class);
-                    for (int j = 0;j<DeviceListDataBean.size();j++){
-                        if (res.getId().equals(DeviceListDataBean.get(j).getTopic())){
+                    for (int j = 0; j < DeviceListDataBean.size(); j++) {
+                        if (res.getId().equals(DeviceListDataBean.get(j).getTopic())) {
                             DeviceListDataBean.get(j).setValue(res.getData());
                         }
                     }
@@ -218,6 +225,7 @@ public class RealPlayActivity extends AppCompatActivity implements SurfaceHolder
             return false;
         }
     }
+
     /**
      * 从服务器获取最新事件消息
      */
@@ -357,7 +365,7 @@ public class RealPlayActivity extends AppCompatActivity implements SurfaceHolder
                     mEZPlayer.setPlayVerifyCode(DataManager.getInstance().getDeviceSerialVerifyCode(mCameraInfo.getDeviceSerial()));
                 }
 
-          //      mEZPlayer.setHandler(mHandler);
+                //      mEZPlayer.setHandler(mHandler);
                 mEZPlayer.setSurfaceHold(mRealPlaySh);
                 mEZPlayer.startRealPlay();
             }

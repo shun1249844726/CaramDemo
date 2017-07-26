@@ -55,4 +55,5 @@ public class AddDevceMethord {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((Observer<? super T>) s);
     }
+
 }
