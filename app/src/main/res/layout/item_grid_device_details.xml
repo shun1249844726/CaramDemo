@@ -20,5 +20,6 @@
         android:gravity="center"
         android:layout_marginTop="10dp"
         android:text="20度"
-        android:textSize="20sp"/>
+        android:maxLines="1"
+        android:textSize="15sp"/>
 </LinearLayout>

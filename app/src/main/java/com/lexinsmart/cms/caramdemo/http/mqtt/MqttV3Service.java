@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class MqttV3Service {
     String addr = "";
     String port = "";
-    private static MqttClient client = null;
+    public static MqttClient client = null;
     private static MqttTopic topic = null;
     static ArrayList<MqttTopic> topicList = new ArrayList<MqttTopic>();
 
@@ -78,5 +78,12 @@ public class MqttV3Service {
             return false;
         }
         return true;
+    }
+    public static boolean isConnected(){
+        if (client.isConnected()){
+            return true;
+        }else {
+            return false;
+        }
     }
 }

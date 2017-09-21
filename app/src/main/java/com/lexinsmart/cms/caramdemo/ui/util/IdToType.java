@@ -12,23 +12,27 @@ import com.orhanobut.logger.Logger;
 public class IdToType {
     public int idToType(String id){
         switch (id){
+            case "er/6636366/00031":
             case "er/6636366/00011":
                 return Constant.TYPE_TEMPETURE;
+            case "er/6636366/00032":
             case "er/6636366/00012":
                 return Constant.TYPE_HUMIDITY;
+            case "er/6636366/00033":
             case "er/6636366/00013":
-                return Constant.TYPE_SMOKE;
 
+                return Constant.TYPE_SMOKE;
+            case "er/6636366/00034":
             case "er/6636366/00014":
                 return Constant.TYPE_INFRARED;
 
-            case "er/6636366/00015":
+            case "er/6636366/00035":
                 return Constant.TYPE_POWER;
 
-            case "er/6636366/00016":
+            case "er/6636366/00036":
                 return Constant.TYPE_DOOR;
 
-            case "er/6636366/00017":
+            case "er/6636366/00037":
                 return Constant.TYPE_AIRCOND;
 
             default:

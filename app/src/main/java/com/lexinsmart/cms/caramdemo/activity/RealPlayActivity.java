@@ -87,13 +87,30 @@ public class RealPlayActivity extends AppCompatActivity implements SurfaceHolder
         for (int topicListIndex = 0; topicListIndex < DeviceListDataBean.size(); topicListIndex++) {
             topicList.add(DeviceListDataBean.get(topicListIndex).getTopic());
         }
-        new Thread(new MqttProcThread()).start();
 
         gvDetails = (GridView) findViewById(R.id.gv_device_details);
         mDeviceDetailsGridAdapter = new DeviceDetailsGridAdapter(context, DeviceListDataBean);
         gvDetails.setAdapter(mDeviceDetailsGridAdapter);
 
         gvDetails.setOnItemClickListener(onclick);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (MqttV3Service.client == null){
+            new Thread(new MqttProcThread()).start();
+        }else if (!MqttV3Service.isConnected()){
+            new Thread(new MqttProcThread()).start();
+
+        }
+
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 
     AdapterView.OnItemClickListener onclick = new AdapterView.OnItemClickListener() {
@@ -104,7 +121,7 @@ public class RealPlayActivity extends AppCompatActivity implements SurfaceHolder
             Gson gson = new Gson();
             String message ="";
             int type = mIdToType.idToType(DeviceListDataBean.get(position).getTopic());
-            if (type > 10) {
+            if (type > 10 && MqttV3Service.isConnected()) {
 
                 linkedHashMap.put("id", DeviceListDataBean.get(position).getTopic());
                 linkedHashMap.put("type", "c");
@@ -126,15 +143,14 @@ public class RealPlayActivity extends AppCompatActivity implements SurfaceHolder
 
                         }
                         message = gson.toJson(linkedHashMap);
-                        MqttV3Service.publishMsg(message, Qos,position);
-                        Logger.d("message:"+message);
+                        MqttV3Service.publishMsg(message.trim().replace(":",": "), Qos,position);
+                        Logger.d("message:"+message.trim().replace(":",": "));
                         break;
                     case Constant.TYPE_DOOR:
                         linkedHashMap.put("ctype", "door");
                         if (Integer.parseInt(DeviceListDataBean.get(position).getValue()) > 0) {
                             DeviceListDataBean.get(position).setValue("000");
                             linkedHashMap.put("data", "000");
-
                             mDeviceDetailsGridAdapter.notifyDataSetChanged();
 
                         } else {
@@ -149,13 +165,15 @@ public class RealPlayActivity extends AppCompatActivity implements SurfaceHolder
 //                           Logger.d("Key: " + e.getKey() + ";   Value: "       + e.getValue());
 //                        }
                         message = gson.toJson(linkedHashMap);
-                        MqttV3Service.publishMsg(message, Qos,position);
-                        Logger.d("message:"+message);
+                        MqttV3Service.publishMsg(message.trim().replace(":",": "), Qos,position);
+                        Logger.d("message:"+message.trim().replace(":",": "));
 
                         break;
                     default:
                         break;
                 }
+            }else if (!MqttV3Service.isConnected()){
+                Toast.makeText(context,"设备未连接！",Toast.LENGTH_SHORT).show();
             }
         }
     };

@@ -12,6 +12,7 @@ import com.lexinsmart.cms.caramdemo.Constant;
 import com.lexinsmart.cms.caramdemo.R;
 import com.lexinsmart.cms.caramdemo.entity.DeviceListData;
 import com.lexinsmart.cms.caramdemo.ui.util.IdToType;
+import com.orhanobut.logger.Logger;
 
 import java.util.List;
 
@@ -88,7 +89,7 @@ public class DeviceDetailsGridAdapter extends BaseAdapter {
                 }
                 break;
             case Constant.TYPE_HUMIDITY:
-                value = "湿度"+value;
+                value = "湿度:"+valueData;
                 holder.imgType.setImageResource(R.mipmap.ic_humidity_on);
                 break;
             case Constant.TYPE_INFRARED:
@@ -98,42 +99,33 @@ public class DeviceDetailsGridAdapter extends BaseAdapter {
                     holder.imgType.setImageResource(R.mipmap.ic_body_detect_off);
                 }
                 else {
-                    if (valueData == 0){
-                        holder.imgType.setImageResource(R.mipmap.ic_body_detect_off);
-                        value = "人体检测：正常";
-
-                    }else {
-                        holder.imgType.setImageResource(R.mipmap.ic_body_detect_on);
-                        value = "人体检测：有人";
-
-                    }
+                    holder.imgType.setImageResource(R.mipmap.ic_body_detect_on);
+                    value = "人体检测:有人";
 
                 }
                 break;
             case Constant.TYPE_SMOKE:
-                value = "烟雾浓度："+value;
+                value = "烟雾浓度:"+valueData;
                 holder.imgType.setImageResource(R.mipmap.ic_smoke_off);
                 break;
             case Constant.TYPE_TEMPETURE:
-                value = "温度："+value+" 度";
+                value = "温度:"+valueData+" 度";
 
                 holder.imgType.setImageResource(R.mipmap.ic_tempeture_on);
                 break;
             case Constant.TYPE_DOOR:
-
+                Logger.d("data:"+valueData);
                 if (valueData == 0){
                     value = "门禁 关";
                     holder.imgType.setImageResource(R.mipmap.ic_close_door);
-
                 }else {
                     value = "门禁 开";
-
                     holder.imgType.setImageResource(R.mipmap.ic_open_door);
-
                 }
                 break;
 
             case Constant.TYPE_POWER:
+                value = "UPS电压:"+valueData;
                 holder.imgType.setImageResource(R.mipmap.ic_power_off);
                 break;
         }
