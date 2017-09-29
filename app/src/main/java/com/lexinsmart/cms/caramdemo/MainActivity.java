@@ -9,10 +9,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.google.gson.Gson;
 import com.lexinsmart.cms.caramdemo.activity.AddDeviceActivity;
+import com.lexinsmart.cms.caramdemo.activity.DateChartActivity;
 import com.lexinsmart.cms.caramdemo.activity.RealPlayActivity;
 import com.lexinsmart.cms.caramdemo.entity.AccessToken;
 import com.lexinsmart.cms.caramdemo.entity.DeviceListData;
@@ -103,9 +105,20 @@ public class MainActivity extends AppCompatActivity {
                 GetDeviceMethod.getInstance().getDeviceList(deviceSubscribe, TOKEN);
             }
         });
+        deviceList.setOnItemClickListener(mOnItemClickListener);
 
 
     }
+    AdapterView.OnItemClickListener mOnItemClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            String topic = DeviceListDataBean.get(position).getTopic();
+            Intent intent = new Intent();
+            intent.putExtra("topic", topic);
+            intent.setClass(MainActivity.this, DateChartActivity.class);
+            startActivity(intent);
+        }
+    };
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
