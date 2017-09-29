@@ -77,7 +77,7 @@ public class DateChartActivity extends AppCompatActivity {
 
             }
         };
-        getDetails(subscriber, topic, 20, 1, "eyJ1c2VybmFtZSI6ICJ4dXNodW4iLCAiZXhwIjogIjIwMTctMTAtMDkgMTI6MTI6MTgifQ==");
+        getDetails(subscriber, topic, 20, 1, Constant.TOKEN);
 
     }
 
