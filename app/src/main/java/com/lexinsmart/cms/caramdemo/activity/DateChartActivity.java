@@ -45,6 +45,7 @@ public class DateChartActivity extends AppCompatActivity {
         chart = (LineChart) findViewById(R.id.chart);
 
 //        String[] week = {"2017-09-14 03:35:53", "2017-09-14 03:35:53", "2017-09-14 03:35:53", "2017-09-14 03:35:53", "2017-09-14 03:35:53", "2017-09-14 03:35:53", "2017-09-14 03:35:53"};
+        //初始化图表
         ChartUtils.initChart(chart);
 
         //    getDetails(subscriber,topic ,""+20,""+1,Constant.TOKEN);
@@ -66,13 +67,17 @@ public class DateChartActivity extends AppCompatActivity {
             public void onNext(DetailsListEntity detailsListEntity) {
                 System.out.println("onNext:");
 
+                //返回成功 解析相应数据。
+
                 Gson gson = new Gson();
                 Logger.json(gson.toJson(detailsListEntity));
 
                 for (int i = 0; i < detailsListEntity.getData().size(); i++) {
+                    //解析相应的数值
                     dates.add(Integer.valueOf(detailsListEntity.getData().get(i).getValue()));
                     xaxis.add(detailsListEntity.getData().get(i).getDate_time());
                 }
+                //通知图表界面发生变化
                 ChartUtils.notifyDataSetChanged(chart, getData(), xaxis);
 
             }

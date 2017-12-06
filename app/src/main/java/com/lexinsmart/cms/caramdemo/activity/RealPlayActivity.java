@@ -102,9 +102,7 @@ public class RealPlayActivity extends AppCompatActivity implements SurfaceHolder
             new Thread(new MqttProcThread()).start();
         }else if (!MqttV3Service.isConnected()){
             new Thread(new MqttProcThread()).start();
-
         }
-
 
     }
 
@@ -180,7 +178,7 @@ public class RealPlayActivity extends AppCompatActivity implements SurfaceHolder
 
     public class MqttProcThread implements Runnable {
 
-        String clientid = "xushun";
+        String clientid = "xushun"+1;
 
         @Override
         public void run() {
@@ -213,6 +211,9 @@ public class RealPlayActivity extends AppCompatActivity implements SurfaceHolder
                 strContent = strContent.replaceAll("\\s*", "");
                 strContent = strContent.trim();
                 Logger.d("strcontent:" + strContent);
+                if (!strContent.startsWith("{")){
+                    return;
+                }
 
                 if (isGoodJson(strContent)) {
                     Gson gson = new Gson();
@@ -331,12 +332,13 @@ public class RealPlayActivity extends AppCompatActivity implements SurfaceHolder
 
             if (result != null) {
 
-                System.out.println("reslut.size():" + result.size());
+                System.out.println("caram:reslut.size():" + result.size());
 
                 mDeviceInfo = result.get(0);
                 mCameraInfo = EZUtils.getCameraInfoFromDevice(mDeviceInfo, 0);
+                System.out.println("caram:"+mCameraInfo.getCameraName());
 
-                String verifyCode = "YEKKCT";
+                String verifyCode = "YFMEAO";
                 LogUtil.debugLog(TAG, "verify code is " + verifyCode);
                 DataManager.getInstance().setDeviceSerialVerifyCode(mCameraInfo.getDeviceSerial(), verifyCode);
                 startRealPlay();

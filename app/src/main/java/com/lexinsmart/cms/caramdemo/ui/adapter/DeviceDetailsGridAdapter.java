@@ -93,7 +93,6 @@ public class DeviceDetailsGridAdapter extends BaseAdapter {
                 holder.imgType.setImageResource(R.mipmap.ic_humidity_on);
                 break;
             case Constant.TYPE_INFRARED:
-
                 if (valueData == 0){
                     value = "人体检测";
                     holder.imgType.setImageResource(R.mipmap.ic_body_detect_off);
